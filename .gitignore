@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# env file (IMPORTANT)
+.env
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor files
+.vscode/
+.idea/
+
+# build files (agar future me use karo)
+dist/
+build/
+
+# optional
+coverage/
