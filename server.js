@@ -8,6 +8,8 @@ import passport from 'passport';
 import { createServer } from 'http';
 import connectDB from './db.js';
 import userRouter from './routes/user.Routes.js';
+// import empRouter from './routes/empSectionRoutes/department.route.js';
+import empRouter from './routes/empSectionRoutes/Department.route.js';
 import './config/passport.js'; // Import passport config
 
 const app = express();
@@ -30,7 +32,7 @@ app.get('/', (req, res) => {
 // Mount routes
 app.use('/api/users', userRouter);
 app.use('/auth', userRouter); // Support /auth/google routes
-
+app.use('/api/departments', empRouter); // Support department routes
 const server = createServer(app);
 const port = process.env.PORT || 5000;
 
