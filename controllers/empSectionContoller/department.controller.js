@@ -1,42 +1,41 @@
 import Department from "../../models/empSectionModel/department.model.js";
 import asyncHandler from "express-async-handler";
-
+import mongoose from "mongoose";
 
 export const createDepartment = asyncHandler(async (req, res) => {
 
-    const { name, description, code, status, location, hod } = req.body;
+  const { name, description, code, status, location, hod } = req.body;
 
-    if (!name?.trim() || !code?.trim() || !status || !location?.trim() || !hod?.trim()) {
-        return res.status(400).json({
-            success: false,
-            message: "All fields are required"
-        })
-    }
-    try {
-   const newDepartment = await Department.create({
-      name, description, code, status, location, hod
-   });
-
-   return res.status(201).json({
-      success: true,
-      message: "Department created successfully",
-      data: newDepartment
-   });
-
-} catch (error) {
-   if (error.code === 11000) {
-      return res.status(400).json({
-         success: false,
-         message: "Department code already exists"
-      });
-   }
-
-   return res.status(500).json({
+  if (!name?.trim() || !code?.trim() || !status || !location?.trim()) {
+    return res.status(400).json({
       success: false,
-      message: error.message
-   });
-}
-}) 
+      message: "All fields are required"
+    });
+  }
+
+  // ✅ base object banao
+  const departmentData = {
+    name,
+    description,
+    code,
+    status,
+    location
+  };
+
+  // ✅ sirf valid hod add karo
+  if (hod && hod.trim() !== "" && mongoose.Types.ObjectId.isValid(hod)) {
+    departmentData.hod = hod;
+  }
+
+  const newDepartment = await Department.create(departmentData);
+
+  return res.status(201).json({
+    success: true,
+    message: "Department created successfully",
+    data: newDepartment
+  });
+
+});
 
 export const getAllDepartments = asyncHandler(async(req,res) => {
     try {
@@ -48,7 +47,8 @@ export const getAllDepartments = asyncHandler(async(req,res) => {
         })
     } catch (error) {
         return res.status(500).json({
-            success
+            success: false,
+            message: error.message
         })
     }
 })
