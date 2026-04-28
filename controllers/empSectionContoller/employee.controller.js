@@ -3,16 +3,15 @@ import Employee from "../../models/empSectionModel/employee.model.js";
 export const createEmployee = asyncHandler(async (req, res) => {
   const { name, email, phone, password, department, designation, role } = req.body;
 
-  // ✅ Validation yaha hona chahiye
   if (
     !name?.trim() ||
     !email?.trim() ||
     !phone?.trim() ||
     !password?.trim() ||
     !department ||
-    !designation ||
-    !role
+    !designation
   ) {
+
     return res.status(400).json({
       success: false,
       message: "All fields are required"
@@ -20,14 +19,9 @@ export const createEmployee = asyncHandler(async (req, res) => {
   }
 
   const newEmp = await Employee.create({
-    name,
-    email,
-    phone,
-    password,
-    department,
-    designation,
-    role
+    ...req.body
   });
+
 
   res.status(201).json({
     success: true,
@@ -37,9 +31,10 @@ export const createEmployee = asyncHandler(async (req, res) => {
 
 
 export const getAllEmp = asyncHandler(async (req, res) => {
-    const emp = await Employee.find().populate("department", "name").populate("designation", "name");
+    const emp = await Employee.find().populate("department", "name").populate("designation", "title");
     res.status(200).json(emp);
 })
+
 
 export const deleteEmployee = asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -49,10 +44,18 @@ export const deleteEmployee = asyncHandler(async (req, res) => {
 
 export const updateEmployee = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { name, email, phone, password, department, designation, role } = req.body;
-    const updateEmp = await Employee.findByIdAndUpdate(id, { name, email, phone, password, department, designation, role }, { new: true });
+    const updateData = { ...req.body };
+    
+    // Don't update password if it's empty
+    if (!updateData.password || updateData.password.trim() === "") {
+        delete updateData.password;
+    }
+
+    const updateEmp = await Employee.findByIdAndUpdate(id, updateData, { new: true });
     res.status(200).json(updateEmp);
 })
+
+
 
 
 
