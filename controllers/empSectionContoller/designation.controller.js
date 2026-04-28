@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import Designation from "../../models/empSectionModel/designation.model.js";
 
 
 export const createDesignation = asyncHandler(async (req, res) => {
@@ -34,22 +35,14 @@ export const createDesignation = asyncHandler(async (req, res) => {
 });
 
 
-const getAllDesignations = asyncHandler(async (req, res) => {
-  try {
+export const getDesignations = asyncHandler(async (req, res) => {
+ 
     const designations = await Designation.find().populate("department", "name");
     return res.status(200).json({
       success: true,
       message: "Designations fetched successfully",
       data: designations
     });
-  }
-    catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-
 });
 
 export const deleteDesignation = asyncHandler(async (req, res) => {     
